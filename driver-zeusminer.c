@@ -176,10 +176,9 @@ bool zeusminer_detect_one(const char *devpath)
 static
 const char *zeusminer_set_clock(struct cgpu_info * const device, const char * const option, const char * const setting, char * const replybuf, enum bfg_set_device_replytype * const success)
 {
-	int val = atoi(setting);
 	struct ICARUS_INFO * const info = device->device_data;
 
-	info->freq = val;
+	info->freq = atoi(setting);
 
 	return NULL;
 }
@@ -187,10 +186,9 @@ const char *zeusminer_set_clock(struct cgpu_info * const device, const char * co
 static
 const char *zeusminer_set_chips(struct cgpu_info * const device, const char * const option, const char * const setting, char * const replybuf, enum bfg_set_device_replytype * const success)
 {
-	int val = atoi(setting);
 	struct ICARUS_INFO * const info = device->device_data;
 
-	info->chips = val;
+	info->chips = atoi(setting);
 
 	return NULL;
 }
@@ -198,11 +196,9 @@ const char *zeusminer_set_chips(struct cgpu_info * const device, const char * co
 static
 const char *zeusminer_set_cores(struct cgpu_info * const device, const char * const option, const char * const setting, char * const replybuf, enum bfg_set_device_replytype * const success)
 {
-	int val = atoi(setting);
 	struct ICARUS_INFO * const info = device->device_data;
 
-	info->cores = val;
-	applog(LOG_DEBUG, ">>>>>>> info->cores = %d", val);
+	info->cores = atoi(setting);
 
 	return NULL;
 }
@@ -212,9 +208,17 @@ const char *zeusminer_set_golden_nonce(struct cgpu_info * const device, const ch
 {
 	struct ICARUS_INFO * const info = device->device_data;
 
-	applog(LOG_DEBUG, ">>>>>>> info->golden_nonce = %s", info->golden_nonce);
 	info->golden_nonce = setting;
-	applog(LOG_DEBUG, ">>>>>>> info->golden_nonce = %s", info->golden_nonce);
+
+	return NULL;
+}
+
+static
+const char *zeusminer_set_nocheck_golden(struct cgpu_info * const device, const char * const option, const char * const setting, char * const replybuf, enum bfg_set_device_replytype * const success)
+{
+	struct ICARUS_INFO * const info = device->device_data;
+
+	info->nocheck_golden = atoi(setting) == 1;
 
 	return NULL;
 }
@@ -225,6 +229,7 @@ const struct bfg_set_device_definition zeusminer_set_device_funcs[] = {
 	{ "chips", zeusminer_set_chips, NULL },
 	{ "cores", zeusminer_set_cores, NULL },
 	{ "golden_nonce", zeusminer_set_golden_nonce, NULL },
+	{ "nocheck_golden",zeusminer_set_nocheck_golden, NULL },
 	{ NULL },
 };
 

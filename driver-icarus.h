@@ -124,6 +124,7 @@ struct ICARUS_INFO {
 	uint16_t freq;
 	uint8_t chips;
 	uint8_t cores;
+	bool nocheck_golden;
 #endif
 };
 
