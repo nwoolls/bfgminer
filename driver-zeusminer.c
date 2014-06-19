@@ -113,7 +113,7 @@ bool zeusminer_detect_one(const char *devpath)
 	*info = (struct ICARUS_INFO){
 		.baud = ZEUSMINER_IO_SPEED,
 		.timing_mode = MODE_DEFAULT,
-		.do_icarus_timing = true,
+		.do_icarus_timing = false,
 		.work_division = 1,
 		.fpga_count = 1,
 		.probe_read_count = 5,
