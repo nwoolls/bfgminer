@@ -125,6 +125,9 @@ bool zeusminer_detect_one(const char *devpath)
 
 	drv_set_defaults(drv, zeusminer_set_device_funcs, info, devpath, detectone_meta_info.serial, 1);
 
+	info->work_division = info->chips * info->cores;
+	info->fpga_count = info->chips * info->cores;
+
 	//send the requested Chip Speed with the detect golden OB
 	//we use the time this request takes in order to calc hashes
 	//so we need to use the same Chip Speed used when hashing
@@ -141,15 +144,18 @@ bool zeusminer_detect_one(const char *devpath)
 		return false;
 	}
 
-	uint64_t golden_speed_per_core = (uint64_t)(((double)0xd26) / ((double)(info->golden_tv.tv_sec) + ((double)(info->golden_tv.tv_usec)) / ((double)1000000)));
+	double hash_count = (double)0xd26;
+	double duration_sec = ((double)(info->golden_tv.tv_sec) + ((double)(info->golden_tv.tv_usec)) / ((double)1000000));
 
 	//determines how the hash rate is calculated when no nonce is returned
-	info->Hs = golden_speed_per_core * info->cores;
+	info->Hs = (double)(duration_sec / hash_count / info->chips / info->cores);
 
 	//set the read_count (how long to wait for a result) based on chips, cores, and time to find a nonce
 	int chips_count_max = ZEUS_CHIPS_COUNT_MAX;
 	if (info->chips > chips_count_max)
 		chips_count_max = nearest_pow(info->chips);
+	//golden_speed_per_core is the number of hashes / second / core
+	uint64_t golden_speed_per_core = (uint64_t)(hash_count / duration_sec);
 	//don't combine the following two lines - overflows leaving info->read_count at 0
 	info->read_count = (uint32_t)((4294967296 * 10) / (info->cores * chips_count_max * golden_speed_per_core * 2));
 	info->read_count = info->read_count * 3/4;
@@ -176,6 +182,8 @@ const char *zeusminer_set_chips(struct cgpu_info * const device, const char * co
 	struct ICARUS_INFO * const info = device->device_data;
 
 	info->chips = atoi(setting);
+	info->work_division = info->chips * info->cores;
+	info->fpga_count = info->chips * info->cores;
 
 	return NULL;
 }
@@ -186,6 +194,8 @@ const char *zeusminer_set_cores(struct cgpu_info * const device, const char * co
 	struct ICARUS_INFO * const info = device->device_data;
 
 	info->cores = atoi(setting);
+	info->work_division = info->chips * info->cores;
+	info->fpga_count = info->chips * info->cores;
 
 	return NULL;
 }
@@ -221,17 +231,10 @@ static
 bool zeusminer_thread_init(struct thr_info * const thr)
 {
 	struct cgpu_info * const device = thr->cgpu;
-	struct ICARUS_INFO * const info = device->device_data;
 
 	device->min_nonce_diff = 1./0x10000;
 
-	bool result = icarus_init(thr);
-
-	//determines how the hash rate is calculated when a nonce is returned
-	int work_division = info->chips * info->cores;
-	info->nonce_mask = 0xffffffff / work_division;
-
-	return result;
+	return icarus_init(thr);
 }
 
 static
