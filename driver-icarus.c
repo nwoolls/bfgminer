@@ -413,27 +413,7 @@ const char *icarus_set_timing(struct cgpu_info * const proc, const char * const 
 
 static uint32_t mask(int work_division)
 {
-	uint32_t nonce_mask = 0x7fffffff;
-
-	// yes we can calculate these, but this way it's easy to see what they are
-	switch (work_division) {
-	case 1:
-		nonce_mask = 0xffffffff;
-		break;
-	case 2:
-		nonce_mask = 0x7fffffff;
-		break;
-	case 4:
-		nonce_mask = 0x3fffffff;
-		break;
-	case 8:
-		nonce_mask = 0x1fffffff;
-		break;
-	default:
-		nonce_mask = 0xffffffff / nearest_pow(work_division);
-	}
-
-	return nonce_mask;
+	return 0xffffffff / nearest_pow(work_division);
 }
 
 // Number of bytes remaining after reading a nonce from Icarus
