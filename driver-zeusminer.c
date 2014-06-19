@@ -163,8 +163,8 @@ bool zeusminer_detect_one(const char *devpath)
 	return true;
 }
 
-// support for --set-device dualminer:dual_mode=1
-// most be set before probing the device
+// support for --set-device
+// must be set before probing the device
 
 static
 const char *zeusminer_set_clock(struct cgpu_info * const device, const char * const option, const char * const setting, char * const replybuf, enum bfg_set_device_replytype * const success)
