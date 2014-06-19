@@ -114,6 +114,7 @@ struct ICARUS_INFO {
 	size_t ob_size;
 	const char *golden_ob;
 	const char *golden_nonce;
+	bool nocheck_golden;
 	bool nonce_littleendian;
 	
 	// Custom driver functions
@@ -124,7 +125,6 @@ struct ICARUS_INFO {
 	uint16_t freq;
 	uint8_t chips;
 	uint8_t cores;
-	bool nocheck_golden;
 #endif
 };
 

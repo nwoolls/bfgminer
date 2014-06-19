@@ -529,11 +529,7 @@ bool icarus_detect_custom(const char *devpath, struct device_drv *api, struct IC
 	icarus_close(fd);
 
 	bin2hex(nonce_hex, nonce_bin, sizeof(nonce_bin));
-	if (
-#ifdef USE_ZEUSMINER
-		!info->nocheck_golden &&
-#endif
-		strncmp(nonce_hex, info->golden_nonce, 8))
+	if (!info->nocheck_golden && strncmp(nonce_hex, info->golden_nonce, 8))
 	{
 		applog(LOG_DEBUG,
 			"%s: "
