@@ -171,7 +171,7 @@ bool zeusminer_lowl_probe(const struct lowlevel_device_info * const info)
 // device_drv functions - miner.h
 
 static
-bool zeusminer_init(struct thr_info * const thr)
+bool zeusminer_thread_init(struct thr_info * const thr)
 {
 	struct cgpu_info * const device = thr->cgpu;
 	struct ICARUS_INFO * const info = device->device_data;
@@ -235,7 +235,7 @@ void zeusminer_drv_init()
 	zeusminer_drv.lowl_probe = zeusminer_lowl_probe;
 
 	// initialize thread
-	zeusminer_drv.thread_init = zeusminer_init;
+	zeusminer_drv.thread_init = zeusminer_thread_init;
 
 	// Icarus scanhash mining hooks
 	zeusminer_drv.job_prepare = zeusminer_job_prepare;
