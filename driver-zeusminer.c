@@ -144,8 +144,14 @@ bool zeusminer_detect_one(const char *devpath)
 		return false;
 	}
 
+	double duration_sec;
 	double hash_count = (double)0xd26;
-	double duration_sec = ((double)(info->golden_tv.tv_sec) + ((double)(info->golden_tv.tv_usec)) / ((double)1000000));
+	uint64_t default_hashes_per_core = (((info->freq * 2) / 3) * 1024) / info->cores;
+
+	if (info->nocheck_golden)
+		duration_sec = hash_count / default_hashes_per_core;
+	else
+		duration_sec = ((double)(info->golden_tv.tv_sec) + ((double)(info->golden_tv.tv_usec)) / ((double)1000000));
 
 	//determines how the hash rate is calculated when no nonce is returned
 	info->Hs = (double)(duration_sec / hash_count / info->chips / info->cores);
