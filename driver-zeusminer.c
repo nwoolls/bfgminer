@@ -182,8 +182,6 @@ const char *zeusminer_set_chips(struct cgpu_info * const device, const char * co
 	struct ICARUS_INFO * const info = device->device_data;
 
 	info->chips = atoi(setting);
-	info->work_division = info->chips * info->cores;
-	info->fpga_count = info->chips * info->cores;
 
 	return NULL;
 }
@@ -194,8 +192,6 @@ const char *zeusminer_set_cores(struct cgpu_info * const device, const char * co
 	struct ICARUS_INFO * const info = device->device_data;
 
 	info->cores = atoi(setting);
-	info->work_division = info->chips * info->cores;
-	info->fpga_count = info->chips * info->cores;
 
 	return NULL;
 }
