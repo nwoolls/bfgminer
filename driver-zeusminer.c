@@ -128,7 +128,7 @@ bool zeusminer_detect_one(const char *devpath)
 		.do_icarus_timing = false,
 		.work_division = 1,
 		.fpga_count = 1,
-		.probe_read_count = 50,
+		.probe_read_count = 5,
 		.golden_nonce = (char*)scrypt_golden_nonce,
 		.chips = ZEUS_CHIPS_COUNT,
 		.freq = ZEUS_DEFAULT_CLOCK,
