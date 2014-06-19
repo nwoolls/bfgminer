@@ -33,18 +33,6 @@ const struct bfg_set_device_definition zeusminer_set_device_funcs[];
 // device helper functions
 
 static
-int zeusminer_calc_chips_count_max(int chips_count)
-{
-	int i;
-
-	for (i = 1; i < 1024; i = i * 2)
-		if (chips_count <= i)
-			return i;
-
-	return 1024;
-}
-
-static
 uint32_t zeusminer_calc_clk_header(uint16_t freq)
 {
 	int chip_clk = freq;
@@ -161,8 +149,7 @@ bool zeusminer_detect_one(const char *devpath)
 	//set the read_count (how long to wait for a result) based on chips, cores, and time to find a nonce
 	int chips_count_max = ZEUS_CHIPS_COUNT_MAX;
 	if (info->chips > chips_count_max)
-		chips_count_max = zeusminer_calc_chips_count_max(info->chips);
-
+		chips_count_max = nearest_pow(info->chips);
 	//don't combine the following two lines - overflows leaving info->read_count at 0
 	info->read_count = (uint32_t)((4294967296 * 10) / (info->cores * chips_count_max * golden_speed_per_core * 2));
 	info->read_count = info->read_count * 3/4;
