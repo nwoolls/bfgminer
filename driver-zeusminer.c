@@ -49,9 +49,9 @@ uint32_t zeusminer_calc_clk_header(uint16_t freq)
 {
 	int chip_clk = freq;
 
-	//max clock 381MHz, min clock 200MHz
-	if (chip_clk > 381)
-		chip_clk = 381;
+	//max clock 383MHz, min clock 200MHz
+	if (chip_clk > 383)
+		chip_clk = 383;
 	else if (chip_clk < 200)
 		chip_clk = 200;
 
