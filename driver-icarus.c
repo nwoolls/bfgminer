@@ -430,7 +430,7 @@ static uint32_t mask(int work_division)
 		nonce_mask = 0x1fffffff;
 		break;
 	default:
-		quit(1, "Invalid2 work_division (%d) must be 1, 2, 4 or 8", work_division);
+		nonce_mask = 0xffffffff / nearest_pow(work_division);
 	}
 
 	return nonce_mask;
