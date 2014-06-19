@@ -3524,3 +3524,14 @@ uint8_t crc8ccitt(const void * const buf, const size_t buflen)
 		crc = _crc8ccitt_table[crc ^ *p++];
 	return crc;
 }
+
+uint32_t nearest_pow(uint32_t num)
+{
+    uint32_t j, k;
+    (j = num & 0xFFFF0000) || (j = num);
+    (k = j & 0xFF00FF00) || (k = j);
+    (j = k & 0xF0F0F0F0) || (j = k);
+    (k = j & 0xCCCCCCCC) || (k = j);
+    (j = k & 0xAAAAAAAA) || (j = k);
+    return j << 1;
+}
