@@ -204,16 +204,6 @@ const char *zeusminer_set_cores(struct cgpu_info * const device, const char * co
 }
 
 static
-const char *zeusminer_set_golden_nonce(struct cgpu_info * const device, const char * const option, const char * const setting, char * const replybuf, enum bfg_set_device_replytype * const success)
-{
-	struct ICARUS_INFO * const info = device->device_data;
-
-	info->golden_nonce = setting;
-
-	return NULL;
-}
-
-static
 const char *zeusminer_set_nocheck_golden(struct cgpu_info * const device, const char * const option, const char * const setting, char * const replybuf, enum bfg_set_device_replytype * const success)
 {
 	struct ICARUS_INFO * const info = device->device_data;
@@ -228,7 +218,6 @@ const struct bfg_set_device_definition zeusminer_set_device_funcs[] = {
 	{ "clock", zeusminer_set_clock, NULL },
 	{ "chips", zeusminer_set_chips, NULL },
 	{ "cores", zeusminer_set_cores, NULL },
-	{ "golden_nonce", zeusminer_set_golden_nonce, NULL },
 	{ "nocheck_golden",zeusminer_set_nocheck_golden, NULL },
 	{ NULL },
 };
