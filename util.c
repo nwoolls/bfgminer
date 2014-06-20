@@ -3526,7 +3526,11 @@ uint8_t crc8ccitt(const void * const buf, const size_t buflen)
 }
 
 // http://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2
+<<<<<<< HEAD
 uint32_t nearest_pow(uint32_t num)
+=======
+uint32_t upper_power_of_two(uint32_t num)
+>>>>>>> origin/pr/2
 {
     num--;
     num |= num >> 1;

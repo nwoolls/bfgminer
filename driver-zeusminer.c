@@ -121,12 +121,25 @@ bool zeusminer_detect_one(const char *devpath)
 		.chips = ZEUS_CHIPS_COUNT,
 		.freq = ZEUS_DEFAULT_CLOCK,
 		.cores = ZEUS_CHIP_CORES,
+<<<<<<< HEAD
 		.ignore_nonce_mask = true,
+=======
+>>>>>>> origin/pr/2
 	};
 
 	//pick up any user-defined settings passed in via --set
 	drv_set_defaults(drv, zeusminer_set_device_funcs, info, devpath, detectone_meta_info.serial, 1);
 
+<<<<<<< HEAD
+=======
+	//3 bits of 32 bits nonce are reserved for cores’ combination
+	//10 bits of 32 bits nonce are reserved for chips’ combination
+	//the nonce range is split into 2^(10+3) parts
+	info->work_division = 8192;
+
+	info->fpga_count = info->chips * info->cores;
+
+>>>>>>> origin/pr/2
 	//send the requested Chip Speed with the detect golden OB
 	//we use the time this request takes in order to calc hashes
 	//so we need to use the same Chip Speed used when hashing
@@ -158,7 +171,11 @@ bool zeusminer_detect_one(const char *devpath)
 	//set the read_count (how long to wait for a result) based on chips, cores, and time to find a nonce
 	int chips_count_max = ZEUS_CHIPS_COUNT_MAX;
 	if (info->chips > chips_count_max)
+<<<<<<< HEAD
 		chips_count_max = nearest_pow(info->chips);
+=======
+		chips_count_max = upper_power_of_two(info->chips);
+>>>>>>> origin/pr/2
 	//golden_speed_per_core is the number of hashes / second / core
 	uint64_t golden_speed_per_core = (uint64_t)(hash_count / duration_sec);
 	//don't combine the following two lines - overflows leaving info->read_count at 0
@@ -256,12 +273,15 @@ bool zeusminer_job_prepare(struct thr_info *thr, struct work *work, __maybe_unus
 	uint32_t target_me = 0xffff / diff;
 	uint32_t header = clk_header + target_me;
 
+<<<<<<< HEAD
 #if !defined (__BIG_ENDIAN__) && !defined(MIPSEB)
 	header = header;
 #else
 	header = swab32(header);
 #endif
 
+=======
+>>>>>>> origin/pr/2
 	memcpy(state->ob_bin, (uint8_t *)&header, 4);
 	memcpy(&state->ob_bin[4], work->data, 80);
 	zeusminer_reverse_bytes(state->ob_bin, 4);
