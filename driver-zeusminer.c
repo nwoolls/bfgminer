@@ -123,6 +123,7 @@ bool zeusminer_detect_one(const char *devpath)
 		.cores = ZEUS_CHIP_CORES
 	};
 
+	//pick up any user-defined settings passed in via --set
 	drv_set_defaults(drv, zeusminer_set_device_funcs, info, devpath, detectone_meta_info.serial, 1);
 
 	info->work_division = info->chips * info->cores;
@@ -145,7 +146,7 @@ bool zeusminer_detect_one(const char *devpath)
 	}
 
 	double duration_sec;
-	double hash_count = (double)0xd26;
+	const double hash_count = (double)0xd26;
 	uint64_t default_hashes_per_core = (((info->freq * 2) / 3) * 1024) / info->cores;
 
 	if (info->ignore_golden_nonce)
