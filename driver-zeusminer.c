@@ -148,7 +148,7 @@ bool zeusminer_detect_one(const char *devpath)
 	double hash_count = (double)0xd26;
 	uint64_t default_hashes_per_core = (((info->freq * 2) / 3) * 1024) / info->cores;
 
-	if (info->nocheck_golden)
+	if (info->ignore_golden_nonce)
 		duration_sec = hash_count / default_hashes_per_core;
 	else
 		duration_sec = ((double)(info->golden_tv.tv_sec) + ((double)(info->golden_tv.tv_usec)) / ((double)1000000));
@@ -203,11 +203,11 @@ const char *zeusminer_set_cores(struct cgpu_info * const device, const char * co
 }
 
 static
-const char *zeusminer_set_nocheck_golden(struct cgpu_info * const device, const char * const option, const char * const setting, char * const replybuf, enum bfg_set_device_replytype * const success)
+const char *zeusminer_set_ignore_golden_nonce(struct cgpu_info * const device, const char * const option, const char * const setting, char * const replybuf, enum bfg_set_device_replytype * const success)
 {
 	struct ICARUS_INFO * const info = device->device_data;
 
-	info->nocheck_golden = atoi(setting) == 1;
+	info->ignore_golden_nonce = atoi(setting) == 1;
 
 	return NULL;
 }
@@ -217,7 +217,7 @@ const struct bfg_set_device_definition zeusminer_set_device_funcs[] = {
 	{ "clock", zeusminer_set_clock, NULL },
 	{ "chips", zeusminer_set_chips, NULL },
 	{ "cores", zeusminer_set_cores, NULL },
-	{ "nocheck_golden",zeusminer_set_nocheck_golden, NULL },
+	{ "ignore_golden_nonce",zeusminer_set_ignore_golden_nonce, NULL },
 	{ NULL },
 };
 
