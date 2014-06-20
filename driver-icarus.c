@@ -413,7 +413,11 @@ const char *icarus_set_timing(struct cgpu_info * const proc, const char * const 
 
 static uint32_t mask(int work_division)
 {
+<<<<<<< HEAD
+	return 0xffffffff / nearest_pow(work_division);
+=======
 	return 0xffffffff / upper_power_of_two(work_division);
+>>>>>>> origin/pr/2
 }
 
 // Number of bytes remaining after reading a nonce from Icarus
@@ -489,7 +493,22 @@ bool icarus_detect_custom(const char *devpath, struct device_drv *api, struct IC
 	if (info->detect_init_func)
 		info->detect_init_func(devpath, fd, info);
 
+<<<<<<< HEAD
+	bin2hex(nonce_hex, nonce_bin, sizeof(nonce_bin));
+	if (!info->ignore_golden_nonce && strncmp(nonce_hex, info->golden_nonce, 8))
+	{
+		applog(LOG_DEBUG,
+			"%s: "
+			"Test failed at %s: get %s, should: %s",
+			api->dname,
+			devpath, nonce_hex, info->golden_nonce);
+		return false;
+	}
+		
+	if (info->read_size - ICARUS_NONCE_SIZE != bytes_left) 
+=======
 	if (!info->ignore_golden_nonce)
+>>>>>>> origin/pr/2
 	{
 		int ob_size = strlen(info->golden_ob) / 2;
 		unsigned char ob_bin[ob_size];
@@ -1051,9 +1070,15 @@ keepwaiting:
 		inc_hw_errors(thr, state->last_work, nonce);
 	icarus_transition_work(state, work);
 
-	hash_count = (nonce & info->nonce_mask);
-	hash_count++;
-	hash_count *= info->fpga_count;
+	if (info->ignore_nonce_mask)
+		hash_count = ((double)(elapsed.tv_sec)
+					  + ((double)(elapsed.tv_usec))/((double)1000000)) / info->Hs;
+	else
+	{
+		hash_count = (nonce & info->nonce_mask);
+		hash_count++;
+		hash_count *= info->fpga_count;
+	}
 
 	applog(LOG_DEBUG, "%"PRIpreprv" nonce = 0x%08x = 0x%08" PRIx64 " hashes (%"PRId64".%06lus)",
 	       icarus->proc_repr,
