@@ -113,20 +113,19 @@ bool zeusminer_detect_one(const char *devpath)
 	*info = (struct ICARUS_INFO){
 		.baud = ZEUSMINER_IO_SPEED,
 		.timing_mode = MODE_DEFAULT,
-		.do_icarus_timing = true,
+		.do_icarus_timing = false,
 		.work_division = 1,
 		.fpga_count = 1,
 		.probe_read_count = 5,
 		.golden_nonce = (char*)scrypt_golden_nonce,
 		.chips = ZEUS_CHIPS_COUNT,
 		.freq = ZEUS_DEFAULT_CLOCK,
-		.cores = ZEUS_CHIP_CORES
+		.cores = ZEUS_CHIP_CORES,
+		.ignore_nonce_mask = true,
 	};
 
+	//pick up any user-defined settings passed in via --set
 	drv_set_defaults(drv, zeusminer_set_device_funcs, info, devpath, detectone_meta_info.serial, 1);
-
-	info->work_division = info->chips * info->cores;
-	info->fpga_count = info->chips * info->cores;
 
 	//send the requested Chip Speed with the detect golden OB
 	//we use the time this request takes in order to calc hashes
@@ -144,8 +143,14 @@ bool zeusminer_detect_one(const char *devpath)
 		return false;
 	}
 
-	double hash_count = (double)0xd26;
-	double duration_sec = ((double)(info->golden_tv.tv_sec) + ((double)(info->golden_tv.tv_usec)) / ((double)1000000));
+	double duration_sec;
+	const double hash_count = (double)0xd26;
+	uint64_t default_hashes_per_core = (((info->freq * 2) / 3) * 1024) / info->cores;
+
+	if (info->ignore_golden_nonce)
+		duration_sec = hash_count / default_hashes_per_core;
+	else
+		duration_sec = ((double)(info->golden_tv.tv_sec) + ((double)(info->golden_tv.tv_usec)) / ((double)1000000));
 
 	//determines how the hash rate is calculated when no nonce is returned
 	info->Hs = (double)(duration_sec / hash_count / info->chips / info->cores);
@@ -163,8 +168,8 @@ bool zeusminer_detect_one(const char *devpath)
 	return true;
 }
 
-// support for --set-device dualminer:dual_mode=1
-// most be set before probing the device
+// support for --set-device
+// must be set before probing the device
 
 static
 const char *zeusminer_set_clock(struct cgpu_info * const device, const char * const option, const char * const setting, char * const replybuf, enum bfg_set_device_replytype * const success)
@@ -182,8 +187,6 @@ const char *zeusminer_set_chips(struct cgpu_info * const device, const char * co
 	struct ICARUS_INFO * const info = device->device_data;
 
 	info->chips = atoi(setting);
-	info->work_division = info->chips * info->cores;
-	info->fpga_count = info->chips * info->cores;
 
 	return NULL;
 }
@@ -194,18 +197,16 @@ const char *zeusminer_set_cores(struct cgpu_info * const device, const char * co
 	struct ICARUS_INFO * const info = device->device_data;
 
 	info->cores = atoi(setting);
-	info->work_division = info->chips * info->cores;
-	info->fpga_count = info->chips * info->cores;
 
 	return NULL;
 }
 
 static
-const char *zeusminer_set_nocheck_golden(struct cgpu_info * const device, const char * const option, const char * const setting, char * const replybuf, enum bfg_set_device_replytype * const success)
+const char *zeusminer_set_ignore_golden_nonce(struct cgpu_info * const device, const char * const option, const char * const setting, char * const replybuf, enum bfg_set_device_replytype * const success)
 {
 	struct ICARUS_INFO * const info = device->device_data;
 
-	info->nocheck_golden = atoi(setting) == 1;
+	info->ignore_golden_nonce = atoi(setting) == 1;
 
 	return NULL;
 }
@@ -215,7 +216,7 @@ const struct bfg_set_device_definition zeusminer_set_device_funcs[] = {
 	{ "clock", zeusminer_set_clock, NULL },
 	{ "chips", zeusminer_set_chips, NULL },
 	{ "cores", zeusminer_set_cores, NULL },
-	{ "nocheck_golden",zeusminer_set_nocheck_golden, NULL },
+	{ "ignore_golden_nonce",zeusminer_set_ignore_golden_nonce, NULL },
 	{ NULL },
 };
 

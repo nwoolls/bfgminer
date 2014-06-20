@@ -3525,13 +3525,15 @@ uint8_t crc8ccitt(const void * const buf, const size_t buflen)
 	return crc;
 }
 
+// http://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2
 uint32_t nearest_pow(uint32_t num)
 {
-    uint32_t j, k;
-    (j = num & 0xFFFF0000) || (j = num);
-    (k = j & 0xFF00FF00) || (k = j);
-    (j = k & 0xF0F0F0F0) || (j = k);
-    (k = j & 0xCCCCCCCC) || (k = j);
-    (j = k & 0xAAAAAAAA) || (j = k);
-    return j << 1;
+    num--;
+    num |= num >> 1;
+    num |= num >> 2;
+    num |= num >> 4;
+    num |= num >> 8;
+    num |= num >> 16;
+    num++;
+    return num;
 }

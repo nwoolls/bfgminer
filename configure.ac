@@ -482,14 +482,17 @@ AM_CONDITIONAL([USE_DUALMINER], [test x$dualminer = xyes])
 
 driverlist="$driverlist zeusminer"
 AC_ARG_ENABLE([zeusminer],
-	[AC_HELP_STRING([--disable-zeusminer],[Compile support for ZeusMiner (default enabled)])],
+	[AC_HELP_STRING([--disable-zeusminer],[Compile support for ZeusMiner (default enabled with scrypt)])],
 	[zeusminer=$enableval],
-	[zeusminer=$ddauto]
-	)
+	[zeusminer=$scrypt])
 if test "x$zeusminer" = "xno"; then
 	true
 elif test "x$icarus" = "xyes"; then
-	zeusminer=yes
+	if test "x$scrypt" = "xno"; then
+		AC_MSG_ERROR([You explicitly enabled ZeusMiner, but did not enable scrypt])
+	else
+		zeusminer=yes
+	fi
 elif test "x$zeusminer" = "xyes"; then
 	AC_MSG_ERROR([You explicitly disabled Icarus and explicitly enabled ZeusMiner])
 else
