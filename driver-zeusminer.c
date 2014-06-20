@@ -120,14 +120,12 @@ bool zeusminer_detect_one(const char *devpath)
 		.golden_nonce = (char*)scrypt_golden_nonce,
 		.chips = ZEUS_CHIPS_COUNT,
 		.freq = ZEUS_DEFAULT_CLOCK,
-		.cores = ZEUS_CHIP_CORES
+		.cores = ZEUS_CHIP_CORES,
+		.ignore_nonce_mask = true,
 	};
 
 	//pick up any user-defined settings passed in via --set
 	drv_set_defaults(drv, zeusminer_set_device_funcs, info, devpath, detectone_meta_info.serial, 1);
-
-	info->work_division = info->chips * info->cores;
-	info->fpga_count = info->chips * info->cores;
 
 	//send the requested Chip Speed with the detect golden OB
 	//we use the time this request takes in order to calc hashes
